@@ -12,6 +12,7 @@ namespace Opt_Oblig_2{
 
 			Console.WriteLine("enter a number: ");
 			int n = Convert.ToInt32(Console.ReadLine());
+			int fitness_1 = 0;
 
 			int[] max_connections = new int[n];
 			int[] fitness = new int[4];
@@ -22,26 +23,27 @@ namespace Opt_Oblig_2{
 			char[] first_child = new char[n];
 			char[] second_child = new char[n];
 
-			fillNodesWithColor(n, first_parent, second_parent);
+			FillNodesWithColor(n, first_parent, second_parent);
 
-			printArray(n, first_parent);
-			printArray(n, second_parent);
+			PrintArray(n, first_parent);
+			//PrintArray(n, second_parent);
 
-			fillRandomGraph(n, max_connections, graph_of_connections);
+			FillRandomGraph(n, max_connections, graph_of_connections);
 
-			printArray(n, graph_of_connections);
-			printArray(n, max_connections);
+			PrintArray(n, graph_of_connections);
+			//PrintArray(n, max_connections);
 
-			crossover(n, first_parent, second_parent, first_child, second_child);
+			Crossover(n, first_parent, second_parent, first_child, second_child);
+			fitness_1 = FindFitness(n, first_parent, graph_of_connections);
+			Console.WriteLine("a fitness of " + fitness_1);
 
-			printArray(n, first_child);
-			printArray(n, second_child);
+			//PrintArray(n, first_child);
+			//PrintArray(n, second_child);
 
 			Console.Read();
-
 		}
 
-		static void crossover(int n, char[] parent_1, char[] parent_2, char[] child_1, char[] child_2) {
+		static void Crossover(int n, char[] parent_1, char[] parent_2, char[] child_1, char[] child_2) {
 			Random rnd = new Random();
 
 			int start = 0, end = 0;
@@ -51,7 +53,7 @@ namespace Opt_Oblig_2{
 			second_point = rnd.Next(0, n);
 			while (second_point == first_point)
 				second_point = rnd.Next(0, n);
-			Console.WriteLine("first: " + first_point + "second: " + second_point);
+			//Console.WriteLine("first: " + first_point + "second: " + second_point);
 			if (first_point < second_point) {
 				start = first_point;
 				end = second_point;
@@ -71,30 +73,55 @@ namespace Opt_Oblig_2{
 					child_2[i] = parent_2[i];
 				}
 			}
+		}
+
+		static void WillItMutate() {
+			Random rnd = new Random();
+
 
 		}
 
-		static void mutation() {
+		static void Mutation(int n, char[] solution) {
+			Random rnd = new Random();
+			int mutated_value = rnd.Next(0, n);
+			char[] colors = { 'w', 'b', 'r' };
 
+			solution[mutated_value] = colors[rnd.Next(0, 3)];
 		}
 
-		static void findFitness() {
+		static int FindFitness(int n, char[] solution, int[,] graph) {
+			int satisfied = 0;
+			int column = 1;
 
+			for (int row = 0; row < n; row++) {
+				while(column < n) {
+					if (graph[row, column] == 1 && solution[row] == solution[column])
+						satisfied++;
+					column++;
+				}
+				column = row + 2;
+			}
+
+			return satisfied;
 		}
 		
-		static void fillRandomGraph(int n, int[] max_connections, int[,] graph) {
+		static void FillRandomGraph(int n, int[] max_connections, int[,] graph) {
 			Random rnd = new Random();
 			int random;
 			int amount_of_connections;
 			int counter = 0;
 
 			for (int i = 0; i < n; i++) {
-				amount_of_connections = rnd.Next(1, 4);
+				amount_of_connections = rnd.Next(1, 4);	//number of connectiosn that a node will have, from 1 to 3
 				while (counter < amount_of_connections || counter == 0){
-					//Console.WriteLine("test");
+					//loop insures that a node will connect to other nodes, unless there a node can't connect to more
+
 					random = rnd.Next(0, n);
-					if (max_connections[i] == 3 || max_connections[random] == 3)
+
+					//if a node already has max connections
+					if (max_connections[i] == 3 || max_connections[random] == 3)	
 						counter = 99;
+					//connect nodes as long as they haven't reached max connections and that they dont connect to itself
 					else if (max_connections[i] != 3 && max_connections[random] != 3 && i != random) {
 						if (graph[i, random] == 1)
 							continue;
@@ -103,15 +130,14 @@ namespace Opt_Oblig_2{
 						max_connections[i] = max_connections[i] + 1;
 						max_connections[random] = max_connections[random] + 1;
 						counter++;
-						//Console.WriteLine("test2");
 					}
 				}
-				counter = 0;
+				counter = 0;	//reset counter so the while loop will work again
 			}
 
 		}
 
-		static void fillNodesWithColor(int n, char[] parent_1, char[] parent_2 ) {
+		static void FillNodesWithColor(int n, char[] parent_1, char[] parent_2 ) {
 			Random rnd = new Random();
 			char[] colors = {'w', 'b', 'r'};
 
@@ -121,20 +147,20 @@ namespace Opt_Oblig_2{
 			}
 		}
 
-		static void printArray(int n, char[] c) {
+		static void PrintArray(int n, char[] c) {
 			for (int i = 0; i < n; i++) {
 				Console.Write(c[i]);
 			}
 			Console.WriteLine();
 		}
 
-		static void printArray(int n, int[] c) {
+		static void PrintArray(int n, int[] c) {
 			for(int i = 0; i < n; i++) {
 				Console.WriteLine(c[i]);
 			}
 		}
 
-		static void printArray(int n, int[,] graph) {
+		static void PrintArray(int n, int[,] graph) {
 			for (int i = 0; i < n; i++) {
 				for (int j = 0; j < n; j++) {
 					Console.Write(graph[i, j]);
