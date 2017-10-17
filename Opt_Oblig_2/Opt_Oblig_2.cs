@@ -12,7 +12,7 @@ namespace Opt_Oblig_2{
 
 			Console.WriteLine("enter a number: ");
 			int n = Convert.ToInt32(Console.ReadLine());
-			int fitness_1 = 0;
+			int[] fitness;
 
 			int[] max_connections = new int[n];
 			int[] fitness = new int[4];
@@ -34,11 +34,15 @@ namespace Opt_Oblig_2{
 			//PrintArray(n, max_connections);
 
 			Crossover(n, first_parent, second_parent, first_child, second_child);
-			fitness_1 = FindFitness(n, first_parent, graph_of_connections);
-			Console.WriteLine("a fitness of " + fitness_1);
+			ChooseOffspring(n, first_parent, second_parent, first_child, second_child, graph_of_connections);
+
+			//fitness_1 = FindFitness(n, first_parent, graph_of_connections);
+			//Console.WriteLine("a fitness of " + fitness_1);
 
 			//PrintArray(n, first_child);
 			//PrintArray(n, second_child);
+
+			fitness = ChooseOffspring();
 
 			Console.Read();
 		}
@@ -75,10 +79,15 @@ namespace Opt_Oblig_2{
 			}
 		}
 
-		static void WillItMutate() {
+		static void WillItMutate(int n, char[] solution) {
 			Random rnd = new Random();
 
+			int chance = rnd.Next(1, 101);
+			int mutation_factor = 10;
 
+			if(chance <= mutation_factor) {
+				Mutation(n, solution);
+			}
 		}
 
 		static void Mutation(int n, char[] solution) {
@@ -87,6 +96,52 @@ namespace Opt_Oblig_2{
 			char[] colors = { 'w', 'b', 'r' };
 
 			solution[mutated_value] = colors[rnd.Next(0, 3)];
+		}
+
+		static void ChooseOffspring(int n, char[] parent_1, char[] parent_2, char[] child_1, char[] child_2, int[,] graph) {
+			int[] fitness = new int[4];
+			int most_satisfied = 0;
+			int second_most_satisfied = 0;
+			int position_of_most_satisfied = 0;
+			int position_of_second_most_satisfied = 0;
+
+			for (int i = 0; i < 4; i++) {
+				if (i == 0)
+					fitness[i] = FindFitness(n, parent_1, graph);
+				else if (i == 1)
+					fitness[i] = FindFitness(n, parent_2, graph);
+				else if (i == 2)
+					fitness[i] = FindFitness(n, child_1, graph);
+				else
+					fitness[i] = FindFitness(n, child_2, graph);
+			}
+
+			most_satisfied = fitness[0];
+			second_most_satisfied = fitness[0];
+
+			for (int j = 1; j < 3; j++) {
+				for (int i = 0; i < 4; i++) {
+					if (j == 1) {
+						if (fitness[i] < fitness[i + 1]) {
+							most_satisfied = fitness[i + 1];
+							position_of_most_satisfied = i + 1;
+						}
+					}
+					else {
+						if (fitness[i] < fitness[i + 1] && position_of_most_satisfied != i) {
+							second_most_satisfied = fitness[i + 1];
+							position_of_second_most_satisfied = i + 1
+						}
+					}
+				}
+			}
+			ChooseNewParents(n, position)
+		}
+
+
+
+		static void ChooseNewParent(int n, int most_satisfied, int second_most_satified, char[] parent_1, char[] parent_2, char[] child_1, char[] child_2) {
+
 		}
 
 		static int FindFitness(int n, char[] solution, int[,] graph) {
