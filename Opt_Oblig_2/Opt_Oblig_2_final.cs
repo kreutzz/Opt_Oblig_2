@@ -43,12 +43,8 @@ namespace Opt_Oblig_2 {
 				unsatisfied_parent_2 = FindFitnessUnsatisfied(n, second_parent, graph_of_connections);
 				amount_of_connections = AmountOfConnections(n, graph_of_connections);
 
-				if (unsatisfied_parent_1 < 1 || unsatisfied_parent_2 < 1)
+				if (unsatisfied_parent_1 < 1 || unsatisfied_parent_2 < 1 || satisfied == amount_of_connections)
 					counter = 1001;
-				else if (satisfied == amount_of_connections) {
-					Console.WriteLine("koblinger: " + amount_of_connections);
-					counter = 1001;
-				}
 				Console.Read();
 			}
 
@@ -296,10 +292,8 @@ namespace Opt_Oblig_2 {
 						//Console.WriteLine("test2");
 						//Console.Read();
 					}
-
 				}
 			}
-
 		}
 
 		static void FillNodesWithColor(int n, char[] parent_1, char[] parent_2) {
