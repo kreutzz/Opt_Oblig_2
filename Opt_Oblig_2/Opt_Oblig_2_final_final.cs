@@ -103,8 +103,12 @@ namespace Opt_Oblig_2 {
 			Random rnd = new Random();
 			int mutated_value = rnd.Next(0, n);
 			char[] colors = { 'w', 'b', 'r' };
+			char color = colors(rnd.Next(0,3);
 
-			solution[mutated_value] = colors[rnd.Next(0, 3)];
+			while(color == solution(mutated_value))
+				color = colors(rnd.Next(0, 3);
+
+			solution[mutated_value] = colors[color];
 		}
 
 		static int ChooseOffspring(int n, char[] parent_1, char[] parent_2, char[] child_1, char[] child_2, int[,] graph) {
