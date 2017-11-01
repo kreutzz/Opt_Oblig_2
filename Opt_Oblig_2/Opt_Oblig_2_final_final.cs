@@ -25,10 +25,10 @@ namespace Opt_Oblig_2 {
 			FillNodesWithColor(n, first_parent, second_parent);
 			FillRandomGraph(n, max_connections, graph_of_connections);
 
-			while (counter < 10000 ) {
+			while (counter < 5 ) {
 				Crossover(n, first_parent, second_parent, first_child, second_child);
-				WillTheOffspringMutate(n, first_child);
-				WillTheOffspringMutate(n, second_child);
+				WillTheOffspringMutate(n, first_child, graph_of_connections);
+				WillTheOffspringMutate(n, second_child, graph_of_connections);
 
 				satisfied = ChooseOffspring(n, first_parent, second_parent, first_child, second_child, graph_of_connections);
 				amount_of_connections = AmountOfConnections(n, graph_of_connections);
@@ -83,12 +83,20 @@ namespace Opt_Oblig_2 {
 			}
 		}
 
-		static void WillTheOffspringMutate(int n, char[] solution) {
+		static void WillTheOffspringMutate(int n, char[] solution, int[,] graph) {
 			Random rnd = new Random();
 
+			int satisfied = 0;
+			int amount_of_connections = AmountOfConnections(n, graph);
 			int chance = rnd.Next(1, 101);
-			int mutation_factor = 10;
+			int mutation_factor = 20;
 
+
+			if (satisfied == amount_of_connections) {
+				Console.WriteLine("optimal solution found before mutation");
+				return;
+			}
+			
 			if (chance <= mutation_factor) {
 				Console.WriteLine("A child has mutated, old child: ");
 				PrintArray(n, solution);
@@ -96,17 +104,17 @@ namespace Opt_Oblig_2 {
 				Console.WriteLine("new child: ");
 				PrintArray(n, solution);
 			}
-
 		}
 
 		static void Mutation(int n, char[] solution) {
 			Random rnd = new Random();
 			int mutated_value = rnd.Next(0, n);
+			char old_color = solution[mutated_value];
 			char[] colors = { 'w', 'b', 'r' };
-			char color = colors(rnd.Next(0,3);
+			int color = rnd.Next(0, 3);
 
-			while(color == solution(mutated_value))
-				color = colors(rnd.Next(0, 3);
+			while (colors[color] == old_color)
+				color = rnd.Next(0, 3);
 
 			solution[mutated_value] = colors[color];
 		}
@@ -260,7 +268,7 @@ namespace Opt_Oblig_2 {
 				counter = 0;    //reset counter so the while loop will work again
 				teller = 0;
 
-				if (i == 4) {
+				if (i == n-1) {
 					for(int j = 0; j < n; j++) {
 						if (max_connections[j] == 0) {
 							teller++;
